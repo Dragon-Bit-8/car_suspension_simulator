@@ -4,7 +4,7 @@ use crate::resorces::*;
 
 //Intefaz gráfica simple
 pub fn ui_example_system(mut contexts: EguiContexts, simulation: Res<Simulation>) -> Result {
-    egui::Window::new("Hello").show(contexts.ctx_mut()?, |ui| {
+    egui::Window::new("Info").show(contexts.ctx_mut()?, |ui| {
         ui.label(format!("Masa = {}kg", simulation.m));
         ui.label(format!("Coef. Amortiguador = {}Ns/m", simulation.b));
         ui.label(format!("Const. Resorte = {}N/m", simulation.k));

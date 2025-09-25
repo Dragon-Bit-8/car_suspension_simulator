@@ -56,7 +56,7 @@ fn main() {
         })
         .insert_resource(CubeTimer(Timer::from_seconds(0.01, TimerMode::Repeating)))
         .add_systems(Startup, setup)
-        .add_systems(Update, (update_simulation, move_cube))
+        .add_systems(Update, (update_simulation, move_cube).chain())
         .add_systems(EguiPrimaryContextPass, ui_example_system)
         .run();
 }
