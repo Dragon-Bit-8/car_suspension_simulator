@@ -32,31 +32,38 @@ Peso estático por rueda: ~3,000 N
 Compresión dinámica típica (baches pequeños): ±1,000 N
 Rango total de fuerza: 2,000–4,000 N
 */
-mod resorces;
 mod components;
 mod egui_ui;
+mod resorces;
 
 use bevy::prelude::*;
 use bevy_egui::{EguiPlugin, EguiPrimaryContextPass};
-use resorces::*;
 use components::*;
 use egui_ui::*;
+use resorces::*;
 
 fn main() {
     App::new()
-        .add_plugins(DefaultPlugins)
+        .add_plugins(DefaultPlugins.set(WindowPlugin { 
+            primary_window: Some(Window {
+                present_mode: bevy::window::PresentMode::AutoVsync, //Trucazo para forzar 60 fps
+                ..default()
+            }),
+            ..default()
+        }))
         .add_plugins(EguiPlugin::default())
         .insert_resource(Simulation {
             m: 300.0,
-            b: 0.0,//2450
+            b: 2450.0, //2450
             k: 20000.0,
             f: 2943.0,
             x: 0.0,
             v: 0.0,
         })
         .insert_resource(CubeTimer(Timer::from_seconds(0.01, TimerMode::Repeating)))
+        .insert_resource(PositionLog::default())
         .add_systems(Startup, setup)
-        .add_systems(Update, (update_simulation, move_cube).chain())
+        .add_systems(Update, (update_simulation,register_position_log, move_cube).chain())
         .add_systems(EguiPrimaryContextPass, ui_example_system)
         .run();
 }
@@ -91,11 +98,7 @@ fn setup(
 }
 
 // Sistema que actualiza la simulación física
-fn update_simulation(
-    time: Res<Time>,
-    mut timer: ResMut<CubeTimer>,
-    mut sim: ResMut<Simulation>,
-) {
+fn update_simulation(time: Res<Time>, mut timer: ResMut<CubeTimer>, mut sim: ResMut<Simulation>) {
     if timer.0.tick(time.delta()).just_finished() {
         let dt = time.delta_secs();
         let a = (sim.f - sim.b * sim.v - sim.k * sim.x) / sim.m;
@@ -111,3 +114,9 @@ fn move_cube(sim: Res<Simulation>, mut query: Query<&mut Transform, With<Cube>>)
     }
 }
 
+fn register_position_log(mut pos_log: ResMut<PositionLog>, sim: Res<Simulation>, time: Res<Time>){
+    let time = pos_log.0.last().unwrap()[0]+time.delta_secs() as f64;
+    if time<=2.5{
+        pos_log.0.push([time,sim.x as f64]);
+    }
+}

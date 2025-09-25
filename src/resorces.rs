@@ -12,3 +12,12 @@ pub struct Simulation {
 
 #[derive(Resource)]
 pub struct CubeTimer(pub Timer);
+
+#[derive(Resource)]
+pub struct PositionLog(pub Vec<[f64;2]>);
+
+impl std::default::Default for PositionLog{
+    fn default() -> Self {
+        Self(vec![[0.0,0.0]])
+    }
+}
