@@ -32,30 +32,23 @@ Peso estático por rueda: ~3,000 N
 Compresión dinámica típica (baches pequeños): ±1,000 N
 Rango total de fuerza: 2,000–4,000 N
 */
+mod resorces;
+mod components;
+mod egui_ui;
+
 use bevy::prelude::*;
-
-#[derive(Resource)]
-struct Simulation {
-    m: f32,
-    b: f32,
-    k: f32,
-    f: f32,
-    x: f32,
-    v: f32,
-}
-
-#[derive(Resource)]
-struct CubeTimer(Timer);
-
-#[derive(Component)]
-struct CubeMarker;
+use bevy_egui::{EguiPlugin, EguiPrimaryContextPass};
+use resorces::*;
+use components::*;
+use egui_ui::*;
 
 fn main() {
     App::new()
         .add_plugins(DefaultPlugins)
+        .add_plugins(EguiPlugin::default())
         .insert_resource(Simulation {
             m: 300.0,
-            b: 2450.0,
+            b: 0.0,//2450
             k: 20000.0,
             f: 2943.0,
             x: 0.0,
@@ -64,6 +57,7 @@ fn main() {
         .insert_resource(CubeTimer(Timer::from_seconds(0.01, TimerMode::Repeating)))
         .add_systems(Startup, setup)
         .add_systems(Update, (update_simulation, move_cube))
+        .add_systems(EguiPrimaryContextPass, ui_example_system)
         .run();
 }
 
@@ -77,7 +71,7 @@ fn setup(
         Mesh3d(meshes.add(Cuboid::new(1.0, 1.0, 1.0))),
         MeshMaterial3d(materials.add(Color::srgb_u8(124, 144, 255))),
         Transform::from_xyz(0.0, 0.0, 0.0),
-        CubeMarker,
+        Cube,
     ));
 
     // Luz
@@ -111,8 +105,9 @@ fn update_simulation(
 }
 
 // Sistema que mueve el cubo según la simulación
-fn move_cube(sim: Res<Simulation>, mut query: Query<&mut Transform, With<CubeMarker>>) {
+fn move_cube(sim: Res<Simulation>, mut query: Query<&mut Transform, With<Cube>>) {
     for mut transform in &mut query {
         transform.translation.y = sim.x; // Mover en el eje X
     }
 }
+
