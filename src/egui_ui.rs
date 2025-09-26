@@ -20,7 +20,7 @@ pub fn ui_system(
         ui.label(format!("Posición = {}", simulation.x));
         ui.label(format!(
             "Razón de amortiguamiento adimensional ( ζ ) = {}",
-            (simulation.b) / (2.0) * (simulation.k * simulation.m).sqrt()
+            (simulation.b) / ((2.0) * (simulation.k * simulation.m).sqrt())
         ));
         ui.label(format!(
             "Frecuencia natural ( ω_n ) = {}",
@@ -42,6 +42,7 @@ pub fn ui_system(
         let k_mod = simulation_mod.k.trim().parse::<f32>().unwrap_or(0.0);
         let timer_mod = simulation_mod.timer.trim().parse::<f32>().unwrap_or(0.0);
 
+        let previus = simulation_mod.preset.clone();
         egui::ComboBox::from_label("Selecciona un preset")
             .selected_text(format!("{}", simulation_mod.preset.to_string()))
             .show_ui(ui, |ui| {
@@ -51,26 +52,28 @@ pub fn ui_system(
                 ui.selectable_value(&mut simulation_mod.preset, Preset::OverDamped, "Sobre Amortiguado");
             }
         );
-
-        match simulation_mod.preset {
-            Preset::UnDamped=>{
-                simulation_mod.b= "0".into();
-            },
-            Preset::Underdamped=>{
-                simulation_mod.m= "1200.0".into();
-                simulation_mod.b= "2450.0".into();
-                simulation_mod.k= "20000.0".into()
-            },
-            Preset::CriticallyDamped=>{
-                simulation_mod.m= "1200.0".into();
-                simulation_mod.b= "4900.0".into();
-                simulation_mod.k= "20000.0".into()
-            },
-            Preset::OverDamped=>{
-                simulation_mod.m= "1200.0".into();
-                simulation_mod.b= "7350.0".into();
-                simulation_mod.k= "20000.0".into()
-            },
+        
+        if previus != simulation_mod.preset{
+            match simulation_mod.preset {
+                Preset::UnDamped=>{
+                    simulation_mod.b= "0".into();
+                },
+                Preset::Underdamped=>{
+                    simulation_mod.m= "1200.0".into();
+                    simulation_mod.b= "2450.0".into();
+                    simulation_mod.k= "20000.0".into()
+                },
+                Preset::CriticallyDamped=>{
+                    simulation_mod.m= "1200.0".into();
+                    simulation_mod.b= "4900.0".into();
+                    simulation_mod.k= "20000.0".into()
+                },
+                Preset::OverDamped=>{
+                    simulation_mod.m= "1200.0".into();
+                    simulation_mod.b= "7350.0".into();
+                    simulation_mod.k= "20000.0".into()
+                },
+            }
         }
 
         ui.horizontal(|ui| {
@@ -92,7 +95,7 @@ pub fn ui_system(
         ui.label(format!("Fuerza constante = {}N", m_mod / 4.0 * 9.81));
         ui.label(format!(
             "Razón de amortiguamiento adimensional ( ζ ) = {}",
-            (b_mod) / (2.0) * (k_mod * m_mod).sqrt()
+            (b_mod) / ((2.0) * (k_mod * m_mod).sqrt())
         ));
         ui.label(format!(
             "Frecuencia natural ( ω_n ) = {}",
