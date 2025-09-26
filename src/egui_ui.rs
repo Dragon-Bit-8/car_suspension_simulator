@@ -9,7 +9,7 @@ pub fn ui_system(
     mut simulation: ResMut<Simulation>,
     mut pos_log: ResMut<PositionLog>,
     mut simulation_mod: ResMut<SimulationModifier>,
-    mut graph_timer: ResMut<GraphTimer>
+    mut graph_timer: ResMut<GraphTimer>,
 ) -> Result {
     egui::Window::new("Info").show(contexts.ctx_mut()?, |ui| {
         ui.label(format!("Masa = {}kg", simulation.m));
