@@ -81,12 +81,33 @@ impl std::default::Default for PositionLog {
 
 //##############################################################
 
+#[derive(Debug,PartialEq,Clone)]
+pub enum Preset {
+    Underdamped,
+    CriticallyDamped,
+    OverDamped,
+    UnDamped
+}
+
+impl std::string::ToString for Preset {
+    fn to_string(&self) -> String {
+        match self {
+        Preset::UnDamped => "Oscilatorio".into(),
+        Preset::Underdamped => "Sub Amortiguado".into(),
+        Preset::CriticallyDamped => "Criticamente Amortiguado".into(),
+        Preset::OverDamped => "Sobre Amortiguado".into()
+            
+        }
+    }
+}
+
 #[derive(Resource)]
 pub struct SimulationModifier {
     pub m: String,
     pub b: String,
     pub k: String,
     pub timer: String,
+    pub preset: Preset
 }
 
 impl std::default::Default for SimulationModifier {
@@ -96,6 +117,7 @@ impl std::default::Default for SimulationModifier {
             b: String::from("2450.0"),
             k: String::from("20000.0"),
             timer: String::from("2.5"),
+            preset: Preset::UnDamped
         }
     }
 }

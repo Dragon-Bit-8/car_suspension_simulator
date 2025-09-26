@@ -41,6 +41,38 @@ pub fn ui_system(
         let b_mod = simulation_mod.b.trim().parse::<f32>().unwrap_or(0.0);
         let k_mod = simulation_mod.k.trim().parse::<f32>().unwrap_or(0.0);
         let timer_mod = simulation_mod.timer.trim().parse::<f32>().unwrap_or(0.0);
+
+        egui::ComboBox::from_label("Selecciona un preset")
+            .selected_text(format!("{}", simulation_mod.preset.to_string()))
+            .show_ui(ui, |ui| {
+                ui.selectable_value(&mut simulation_mod.preset, Preset::UnDamped, "Oscilatorio");
+                ui.selectable_value(&mut simulation_mod.preset, Preset::Underdamped, "Sub Amortiguado");
+                ui.selectable_value(&mut simulation_mod.preset, Preset::CriticallyDamped, "Criticamente Amortiguado");
+                ui.selectable_value(&mut simulation_mod.preset, Preset::OverDamped, "Sobre Amortiguado");
+            }
+        );
+
+        match simulation_mod.preset {
+            Preset::UnDamped=>{
+                simulation_mod.b= "0".into();
+            },
+            Preset::Underdamped=>{
+                simulation_mod.m= "1200.0".into();
+                simulation_mod.b= "2450.0".into();
+                simulation_mod.k= "20000.0".into()
+            },
+            Preset::CriticallyDamped=>{
+                simulation_mod.m= "1200.0".into();
+                simulation_mod.b= "4900.0".into();
+                simulation_mod.k= "20000.0".into()
+            },
+            Preset::OverDamped=>{
+                simulation_mod.m= "1200.0".into();
+                simulation_mod.b= "7350.0".into();
+                simulation_mod.k= "20000.0".into()
+            },
+        }
+
         ui.horizontal(|ui| {
             ui.label("Masa = ");
             ui.text_edit_singleline(&mut simulation_mod.m);

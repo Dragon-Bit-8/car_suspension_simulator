@@ -106,7 +106,7 @@ fn setup(
     commands.insert_resource(ColorPool {
         available: vec![
             Color::srgba_u8(232, 250, 0, 0),
-            Color::srgba_u8(255, 230, 2, 0),
+            Color::srgba_u8(20, 80, 130, 0),
             Color::BLACK,
         ],
         used: vec![],
@@ -124,7 +124,7 @@ fn setup(
     // Cámara
     commands.spawn((
         Camera3d::default(),
-        Transform::from_xyz(-7.0, 3.0, 0.0).looking_at(Vec3::ZERO, Vec3::Y),
+        Transform::from_xyz(-7.0, 2.0, 0.0).looking_at(Vec3::ZERO, Vec3::Y),
     ));
 }
 
